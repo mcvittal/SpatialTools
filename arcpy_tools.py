@@ -202,3 +202,34 @@ def make_identical_tif_extents(tif_list, temp_dir="tmp"):
     print("{} GeoTIFFs processed to have identical extents in {}:{}:{}".format(len(tif_list), t["hh"], t["mm"], t['ss']))
     
     return output_tif_list
+    
+## gdb_table_to_csv: String String Boolean --> None 
+##
+## Description:
+## Takes in a geodatabase table and converts it to a CSV. 
+##
+## Requirements:
+## None. 
+## 
+## Inputs:
+## in_table: Path to a table contained within an ESRI file geodatabase. 
+## 
+## out_csv: Path to a CSV file that will be either created or overwritten.
+##
+## ordered: Boolean flag to specify if you would like to order the fields alphabetically. True will sort the fields and false will put the fields in the same order as the input table 
+
+
+def gdb_table_to_csv(in_table, out_csv, ordered):
+    fields = [n.name for n in arcpy.ListFields(in_table)]
+    if ordered:
+        fields = sorted(fields)
+    f = open(out_csv, 'w')
+    cursor = arcpy.SearchCursor(in_table)
+    f.write(",".join(fields))
+    f.write("\n")
+    for row in cursor:
+        line = ",".join([str(row.getValue(n)) for n in fields])
+        f.write(line)
+        f.write("\n")
+    f.close()
+    
