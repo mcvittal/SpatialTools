@@ -1,4 +1,4 @@
-
+from datetime import datetime, timedelta 
 ## readable_time: Int Int --> Dict{"hh":String, "mm":String, "ss":String)
 ##
 ## Description: 
@@ -13,7 +13,7 @@
 ## end_time:    Time that a process ended. 
 ##
 ## Outputs:
-## Returns a dict with three indices. 
+## Returns a dict with four indices. 
 ## 
 ## 
 ## Example: 
@@ -32,14 +32,16 @@
 
 def readable_time(start_time, end_time):
     elapsed = end_time - start_time 
-    elapsed_hours = int(elapsed / 3600)
-    elapsed_minutes =  int(((elapsed - (elapsed_hours * 3600)) / 60))
-    elapsed_seconds = int((elapsed - (elapsed_minutes * 60)))
+    sec = timedelta(seconds=elapsed) 
+    d = datetime(1,1,1) + sec 
+    
     t = {}
-    t["hh"] = str(elapsed_hours)
-    t["mm"] = str(elapsed_minutes)
-    t["ss"] = str(elapsed_seconds)
+    t["dd"] = str(int(d.day - 1))
+    t["hh"] = str(int(d.hour))
+    t["mm"] = str(d.minute)
+    t["ss"] = str(d.second)
     for k in t:
         if len(t[k]) == 1:
             t[k] = "0{}".format(t[k])
     return t 
+t = readable_time(3875, 999999)
