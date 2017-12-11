@@ -44,4 +44,4 @@ def readable_time(start_time, end_time):
         if len(t[k]) == 1:
             t[k] = "0{}".format(t[k])
     return t 
-t = readable_time(3875, 999999)
+
