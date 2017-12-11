@@ -1,3 +1,14 @@
 
 *.pyc
 testing.py
+*.tfw
+*.tif
+*.xml
+*.ovr
+*.dbf
+*.prj
+*.sbn
+*.sbx
+*.shp
+*.shx
+*.dir
