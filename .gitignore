@@ -12,3 +12,4 @@ testing.py
 *.shp
 *.shx
 *.dir
+*.lock
