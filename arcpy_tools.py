@@ -199,7 +199,7 @@ def make_identical_tif_extents(tif_list, temp_dir="tmp"):
     end_time = time.time()
     t = gt.readable_time(start_time, end_time) 
     output_tif_list = tif_list_fixed_extents
-    print("{} GeoTIFFs processed to have identical extents in {}:{}:{}".format(len(tif_list), t["hh"], t["mm"], t['ss']))
+    print("{} GeoTIFFs processed to have identical extents in {} days, {}:{}:{}".format(len(tif_list), t['dd'], t["hh"], t["mm"], t['ss']))
     
     return output_tif_list
     
