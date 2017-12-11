@@ -196,10 +196,9 @@ def make_identical_tif_extents(tif_list, temp_dir="tmp"):
             outExtract = arcpy.sa.ExtractByMask(a_tif, os.path.join(temp_dir, "final_cutout_proj.shp"))
             outExtract.save(os.path.join(temp_dir, desc + "_clip.tif"))
         tif_list_fixed_extents.append(os.path.join(temp_dir, desc + "_clip.tif"))
-    if not os.path.isfile(os.path.join(temp_dir, "mask_file_thisprov.shp")):
-        arcpy.Clip_analysis(mask_file, os.path.join(temp_dir, "final_cutout_proj.shp"), os.path.join(temp_dir, "mask_file_thisprov.shp"))
     end_time = time.time()
     t = gt.readable_time(start_time, end_time) 
+    output_tif_list = tif_list_fixed_extents
     print("{} GeoTIFFs processed to have identical extents in {}:{}:{}".format(len(input_tif_list), t["hh"], t["mm"], t['ss']))
     
     return output_tif_list
