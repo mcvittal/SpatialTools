@@ -33,7 +33,7 @@
 def readable_time(start_time, end_time):
     elapsed = end_time - start_time 
     elapsed_hours = int(elapsed / 3600)
-    elapsed_minutes =  int(((elapsed - (elapsed_hours * 3600)) / 60)
+    elapsed_minutes =  int(((elapsed - (elapsed_hours * 3600)) / 60))
     elapsed_seconds = int((elapsed - (elapsed_minutes * 60)))
     t = {}
     t["hh"] = str(elapsed_hours)
