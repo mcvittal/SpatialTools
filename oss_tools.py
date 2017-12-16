@@ -1,6 +1,8 @@
-import numpy, gdal 
+import numpy, gdal
 
-from gdalconst import * 
+from osgeo import gdal_array
+
+from gdalconst import *
 
 ## RasterToNumPyArray: String NumPy(Datatype) --> NumPy Array 
 ##
@@ -40,8 +42,8 @@ def RasterToNumPyArray(raster_path, dtype=None):
 ## Returns the projection of the input raster 
 
 def getProjection(in_raster_path):
-    return gdal.Open(in_raster_path).GetProjection() 
-    
+    return gdal.Open(in_raster_path).GetProjection()
+
 ## getProjection: String --> GDAL Geotransformation Datatype 
 ##
 ## Description: 
@@ -59,32 +61,53 @@ def getGeoTransform(in_raster_path):
     return gdal.Open(in_raster_path).GetGeoTransform()
 
 
-    
+## NumPyArrayToRaster: Array[][], GDAL Projection, GDAL Geotransform, String, Datatype 
+##
+## Description:
+##
+## Converts a Numpy array into a GeoTIFF using GDAL libraries. 
+## Designed to be a replacement to ESRI's equivalent function NumPyArrayToRaster.
+##
+## Inputs:
+## 
+## nparr:               A valid 2D or 3D Numpy array containing numerical data. 
+##
+## proj:                A valid GDAL projection datatype. Can be obtained by using getProjection() 
+##
+## geot:                A valid GDAL geotransform datatype. Can be obtained by using getGeoTransform()
+##
+## out_raster_path:     A path to where you would like to save the raster dataset.
+##
+## dtype:               Optional, allows user to specify the datatype in the output TIFF. Is a GDAL datatype.
+##                      If not specified, will use the closest match to what is contained in the Numpy array.
+
 def NumPyArrayToRaster(nparr, proj, geot, out_raster_path, dtype=None):
     gdal.AllRegister()
     np_dt = nparr.dtype 
-    
-    
-    # Merge the output raster with the raster saved to disk - does not seem to want to overwrite the output 
-    # so instead, read in, merge, delete and save to file. 
-    try:
-        os.remove(out_raster_path)
-        # Sometimes has to wait a bit for IO to finish deleting the file. 
-        while os.path.isfile(out_raster_path):
-            time.sleep(1)
+    if dtype == None:
+        dtype = gdal_array.NumericTypeCodeToGDALTypeCode(np_dt)
 
-    except:
-        pass # For first run, it won't be able to merge, rather just write it to file. Hence try catch. 
+    print( "saving")
+    # Check if working with multiband raster
+    if len(nparr.shape) == 3:
+        n_bands = nparr.shape[0] 
+        for x in range(0, n_bands):
+            driver = gdal.GetDriverByName('GTIFF')
+            outDs = driver.Create(out_raster_path, nparr.shape[2], nparr.shape[1], n_bands, dtype,
+                                  ['COMPRESS=LZW', 'TILED=YES', 'BLOCKXSIZE=128', 'BLOCKYSIZE=128'])
+            outDs.GetRasterBand(x + 1).WriteArray(nparr[x])
+            outDs.GetRasterBand(x + 1).FlushCache()
+            outDs.SetProjection(proj)
+            outDs.SetGeoTransform(geot)
 
-    print "saving"
-    driver = gdal.GetDriverByName('GTIFF')             
-    outDs = driver.Create(out_raster_path, nparr.shape[1], nparr.shape[0], 1, GDT_UInt16, 
-                          ['COMPRESS=LZW', 'TILED=YES', 'BLOCKXSIZE=128', 'BLOCKYSIZE=128'])
-    outDs.GetRasterBand(1).WriteArray(nparr)
-    outDs.GetRasterBand(1).SetNoDataValue(255)
-    outDs.GetRasterBand(1).FlushCache()
-    outDs.SetProjection(proj)
-    outDs.SetGeoTransform(geot)
-       
-    outDs = None 
-    
+            outDs = None
+    else:
+        driver = gdal.GetDriverByName('GTIFF')
+        outDs = driver.Create(out_raster_path, nparr.shape[1], nparr.shape[0], 1, dtype,
+                              ['COMPRESS=LZW', 'TILED=YES', 'BLOCKXSIZE=128', 'BLOCKYSIZE=128'])
+        outDs.GetRasterBand(1).WriteArray(nparr)
+        outDs.GetRasterBand(1).FlushCache()
+        outDs.SetProjection(proj)
+        outDs.SetGeoTransform(geot)
+        outDs = None
+
