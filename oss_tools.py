@@ -116,7 +116,13 @@ def NumPyArrayToRaster(nparr, proj, geot, out_raster_path, dtype=None):
 ## 
 ## Purpose
 ##      Converts an input GeoTIFF raster into a plaintext file that can be read in by the NetLogo 
-##      modelling language and use it as a surface for the turtles to interact with.         
+##      modelling language and use it as a surface for the turtles to interact with. 
+##
+## Inputs
+##      tif_file                A path to a valid GeoTIFF file. Spatial information does not necessarily matter. 
+##      output_nlogo_textfile   A path to where you'd like the output netlogo surface file to go 
+##      percentage_increase     How often you'd like progress indicators to print to the screen. Default value: 20. Optional.
+
 def convertToNetLogo(tif_file, output_nlogo_textfile, percentage_increase=20):
     # Specifies which band the input data is in for the raster.
     data_band = 1
