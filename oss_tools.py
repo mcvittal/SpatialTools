@@ -111,3 +111,43 @@ def NumPyArrayToRaster(nparr, proj, geot, out_raster_path, dtype=None):
         outDs.SetGeoTransform(geot)
         outDs = None
 
+        
+## convertToNetlogo: String String --> None 
+## 
+## Purpose
+##      Converts an input GeoTIFF raster into a plaintext file that can be read in by the NetLogo 
+##      modelling language and use it as a surface for the turtles to interact with.         
+def convertToNetLogo(tif_file, output_nlogo_textfile, percentage_increase=20):
+    # Specifies which band the input data is in for the raster.
+    data_band = 1
+    
+    # Read the TIF file as a GDAL object
+    tif_connection = gdal.Open(tif_file)
+
+    # Convert the TIF connection to a Numpy 2D array (First band only)
+    tif_array = numpy.array(tif_connection.GetRasterBand(data_band).ReadAsArray())
+    #tif_array = numpy.full((200, 10000), 0)
+
+    # Setup connection to output dataset
+    output_connection = open(output_nlogo_textfile, 'w')
+
+    # An indicator dict to print percentage
+    progress = {}
+    for x in range(0, 101, percentage_increase):
+        progress[x] = True
+    # Begin looping through numpy array
+    for y in range(tif_array.shape[0] - 1, -1, -1):
+        for x in range(0, tif_array.shape[1]):
+            # Get percentage (Current PercenTage)
+            cpt = round((((x + 1) * ( y + 1)) / float(tif_array.shape[0] * tif_array.shape[1])) * 100, 0 )
+            cpt = int(cpt)
+            # Print the progress if it hasn't been printed before - good simple UI
+            if cpt in progress.keys():
+                if progress[cpt]:
+                    print ("{}% done".format(cpt))
+                    progress[cpt] = False
+            # Write current indice to output file
+            output_connection.write("{}\t{}\t{}\n".format(y, tif_array.shape[1] - x, tif_array[y][x]))
+
+    # Close the IO stream
+    output_connection.close()
