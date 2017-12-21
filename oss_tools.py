@@ -181,5 +181,5 @@ def reclass(in_raster, reclass_table, out_raster):
         end_range = i[1]
         rc_val = i[2] 
         nparr[start_range <= nparr < end_range] = rc_val 
-    nparr[nparr >= end_range] = rc_val 
+    nparr[nparr >= reclass_table[-1][0]] = rc_val 
     NumPyArrayToRaster(nparr, getProjection(in_raster), getGeoTransform(in_raster), out_raster)
