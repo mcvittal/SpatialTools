@@ -219,7 +219,7 @@ def make_identical_tif_extents(tif_list, temp_dir="tmp"):
 ## ordered: Boolean flag to specify if you would like to order the fields alphabetically. True will sort the fields and false will put the fields in the same order as the input table 
 
 
-def gdb_table_to_csv(in_table, out_csv, ordered):
+def gdb_table_to_csv(in_table, out_csv, ordered=True):
     fields = [n.name for n in arcpy.ListFields(in_table)]
     if ordered:
         fields = sorted(fields)
