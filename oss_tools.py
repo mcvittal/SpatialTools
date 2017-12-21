@@ -157,3 +157,29 @@ def convertToNetLogo(tif_file, output_nlogo_textfile, percentage_increase=20):
 
     # Close the IO stream
     output_connection.close()
+
+    
+## reclass:     String List String --> None 
+## Purpose 
+##      Reclassifies a raster based on a raster reclassification table 
+##
+## Inputs 
+##      in_raster       Path to a singleband input raster 
+##      reclass_table   A list of three element lists. 
+##                      [start_range, end_range, reclass_value] 
+##                      Mathematically, this looks like 
+##                      start_range <= x < end_range 
+##
+##                      There is a final element where it is a single value where you reclass all other
+##                      values not in the specified ranges. 
+##
+##      out_raster      Path to an output raster     
+def reclass(in_raster, reclass_table, out_raster):
+    nparr = RasterToNumPyArray(in_raster) 
+    for i in reclass_table[:-1]:
+        start_range = i[0]
+        end_range = i[1]
+        rc_val = i[2] 
+        nparr[start_range <= nparr < end_range] = rc_val 
+    nparr[nparr >= end_range] = rc_val 
+    NumPyArrayToRaster(nparr, getProjection(in_raster), getGeoTransform(in_raster), out_raster)
