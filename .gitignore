@@ -13,3 +13,4 @@ testing.py
 *.shx
 *.dir
 *.lock
+ogr2ogr.py

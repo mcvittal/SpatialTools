@@ -176,8 +176,8 @@ def convertToNetLogo(tif_file, output_nlogo_textfile, percentage_increase=20):
 ##      out_raster      Path to an output raster
 def reclass(in_raster, reclass_table, out_raster):
     nparr = RasterToNumPyArray(in_raster) 
-    min_start_range = 0 
-    max_end_range = 0 
+    min_start_range = reclass_table[0][0]
+    max_end_range = reclass_table[0][1]
     for i in reclass_table[:-1]:
         start_range = i[0]
         end_range = i[1]
@@ -186,8 +186,8 @@ def reclass(in_raster, reclass_table, out_raster):
         if end_range > max_end_range:
             max_end_range = end_range 
         rc_val = i[2] 
-        nparr[(start_range <= nparr)  & (nparr < end_range)] = rc_val 
+        nparr[numpy.where((start_range <= nparr) & (nparr < end_range))] = rc_val 
     final_rc_val = reclass_table[-1:][0]
-    #nparr[nparr < min_start_range] = final_rc_val
-    #nparr[nparr >= max_end_range] = final_rc_val
+    #nparr[numpy.where(nparr < min_start_range)] = final_rc_val
+    #nparr[numpy.where(nparr >= max_end_range)] = final_rc_val
     NumPyArrayToRaster(nparr, getProjection(in_raster), getGeoTransform(in_raster), out_raster)
