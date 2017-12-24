@@ -8,7 +8,7 @@ import general_tools as gt
 
 
 
-## force_license: list(String) --> None 
+## force_license: union(list(String) String) --> None 
 ##
 ## Description: 
 ##
@@ -59,6 +59,8 @@ import general_tools as gt
 def force_license(list_of_licenses):
     start_time = time.time()
     not_checked_out = []
+    if type(list_of_licenses) is str:
+        list_of_licenses = [list_of_licenses]
     for license in list_of_licenses:
         print ("Waiting for {}".format(license))
         while arcpy.CheckExtension(license) != 'Available':
