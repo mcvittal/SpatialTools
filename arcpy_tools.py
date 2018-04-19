@@ -15,7 +15,7 @@ def fn(x):
 
 
 
-## force_license: list(String) --> None 
+## force_license: union(list(String) String) --> None 
 ##
 ## Description: 
 ##
@@ -66,6 +66,8 @@ def fn(x):
 def force_license(list_of_licenses):
     start_time = time.time()
     not_checked_out = []
+    if type(list_of_licenses) is str:
+        list_of_licenses = [list_of_licenses]
     for license in list_of_licenses:
         print ("Waiting for {}".format(license))
         while arcpy.CheckExtension(license) != 'Available':
@@ -226,7 +228,7 @@ def make_identical_tif_extents(tif_list, temp_dir="tmp"):
 ## ordered: Boolean flag to specify if you would like to order the fields alphabetically. True will sort the fields and false will put the fields in the same order as the input table 
 
 
-def gdb_table_to_csv(in_table, out_csv, ordered):
+def gdb_table_to_csv(in_table, out_csv, ordered=True):
     fields = [n.name for n in arcpy.ListFields(in_table)]
     if ordered:
         fields = sorted(fields)
