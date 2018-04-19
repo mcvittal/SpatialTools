@@ -17,6 +17,10 @@ Contains various geospatial tools that use GDAL and numpy for processing.
 Contains some helper functions that are still used in both oss_tools and arcpy_tools, but aren't necessarily spatial-releated or need special spatial libraries to execute.
 
 
+## Other code folders
+
+I've also included a few projects that I've worked on for different assignments and projects (auto census and GSOD). Separate READMEs are available within their respective folders.
+
 
 # Using this repository
 
