@@ -27,6 +27,25 @@ def RasterToNumPyArray(raster_path, dtype=None):
     else:
         return gdal.Open(raster_path).ReadAsArray().astype(dtype)
 
+## getNoDataValue: String --> Number 
+##
+## Description:
+##
+## Returns the NoData value of an input raster 
+##
+## Inputs:
+## 
+## in_raster_path: Path to a valid raster file 
+##
+## Outputs:
+##
+## Returns a numeric value representing the NoData pixel value of the input raster.
+
+def getNoDataValue(in_raster_path):
+    t = gdal.Open(in_raster_path).GetRasterBand(1)
+    t = t.GetNoDataValue() 
+    return t
+
 ## getProjection: String --> GDAL Projection Datatype 
 ##
 ## Description: 
@@ -76,12 +95,15 @@ def getGeoTransform(in_raster_path):
 ##
 ## geot:                A valid GDAL geotransform datatype. Can be obtained by using getGeoTransform()
 ##
+## nodata_value:        Sets the NoData value of the output raster. Should be a datatype that matches the
+##                      input nparr (ex. if nparr is integers, use an integer value)
+##
 ## out_raster_path:     A path to where you would like to save the raster dataset.
 ##
 ## dtype:               Optional, allows user to specify the datatype in the output TIFF. Is a GDAL datatype.
 ##                      If not specified, will use the closest match to what is contained in the Numpy array.
 
-def NumPyArrayToRaster(nparr, proj, geot, out_raster_path, dtype=None):
+def NumPyArrayToRaster(nparr, proj, geot, nodata_value, out_raster_path, dtype=None):
     gdal.AllRegister()
     np_dt = nparr.dtype 
     if dtype == None:
@@ -96,6 +118,7 @@ def NumPyArrayToRaster(nparr, proj, geot, out_raster_path, dtype=None):
             outDs = driver.Create(out_raster_path, nparr.shape[2], nparr.shape[1], n_bands, dtype,
                                   ['COMPRESS=LZW', 'TILED=YES', 'BLOCKXSIZE=128', 'BLOCKYSIZE=128'])
             outDs.GetRasterBand(x + 1).WriteArray(nparr[x])
+            outDs.GetRasterBand(x + 1).SetNoDataValue(nodata_value)
             outDs.GetRasterBand(x + 1).FlushCache()
             outDs.SetProjection(proj)
             outDs.SetGeoTransform(geot)
@@ -106,6 +129,7 @@ def NumPyArrayToRaster(nparr, proj, geot, out_raster_path, dtype=None):
         outDs = driver.Create(out_raster_path, nparr.shape[1], nparr.shape[0], 1, dtype,
                               ['COMPRESS=LZW', 'TILED=YES', 'BLOCKXSIZE=128', 'BLOCKYSIZE=128'])
         outDs.GetRasterBand(1).WriteArray(nparr)
+        outDs.GetRasterBand(1).SetNoDataValue(nodata_value)
         outDs.GetRasterBand(1).FlushCache()
         outDs.SetProjection(proj)
         outDs.SetGeoTransform(geot)

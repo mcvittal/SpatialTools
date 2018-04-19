@@ -1,6 +1,13 @@
 import arcpy, time, os, shutil 
 
 import general_tools as gt
+import os, sys 
+
+
+def fn(x):
+    print(x)
+    return None
+
 
 ## Arcpy_Tools.py 
 ## 

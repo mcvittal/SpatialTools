@@ -20,7 +20,7 @@ from datetime import datetime, timedelta
 ##
 ## >> start = time.time()
 ## >> time.sleep(76)
-## >> end = time.time() 
+## >> end = time.time()
 ## >> t = readable_time(start, end)
 ## >> t["hh"]
 ## "00"
@@ -28,13 +28,13 @@ from datetime import datetime, timedelta
 ## "01"
 ## >> t["ss"]
 ## "16"
-## >> 
+## >>
 
 def readable_time(start_time, end_time):
-    elapsed = end_time - start_time 
-    sec = timedelta(seconds=elapsed) 
-    d = datetime(1,1,1) + sec 
-    
+    elapsed = end_time - start_time
+    sec = timedelta(seconds=elapsed)
+    d = datetime(1,1,1) + sec
+
     t = {}
     t["dd"] = str(int(d.day - 1))
     t["hh"] = str(int(d.hour))
@@ -43,5 +43,5 @@ def readable_time(start_time, end_time):
     for k in t:
         if len(t[k]) == 1:
             t[k] = "0{}".format(t[k])
-    return t 
+    return t
 
