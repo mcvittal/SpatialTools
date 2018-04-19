@@ -1,7 +1,7 @@
-import glob, os, sys, arcpy 
+import glob, os, sys
 
-csv_master_guide = r"Z:\World\GSOD\station_locations.csv"
-output_directory = r"Y:\alex\GSOD_PROCESSED"
+csv_master_guide = "isd-history.csv"
+output_directory = os.getcwd()
 master_file_conn = open(csv_master_guide, 'r')
 
 master_file = master_file_conn.read().split("\n")
