@@ -1,8 +1,15 @@
 import numpy, gdal
 
-from osgeo import gdal_array
+from osgeo import gdal_array, ogr, osr
 
 from gdalconst import *
+
+import shapefile 
+import pygeoif
+
+from pyproj import Proj, transform
+
+import ogr2ogr
 
 ## RasterToNumPyArray: String NumPy(Datatype) --> NumPy Array 
 ##
@@ -215,3 +222,39 @@ def reclass(in_raster, reclass_table, out_raster):
     #nparr[numpy.where(nparr < min_start_range)] = final_rc_val
     #nparr[numpy.where(nparr >= max_end_range)] = final_rc_val
     NumPyArrayToRaster(nparr, getProjection(in_raster), getGeoTransform(in_raster), out_raster)
+
+
+## reprojectShp: 	String, String -> String 
+## Purpose: 		Takes in the path to an ESRI shapefile and reprojects it to a specified EPSG.
+## 			By default, will reproject the shapefile to EPSG:4326 prior to converting to WKT, but can be disabled by passing in False as 
+##			the second parameter.
+##
+## Inputs:	
+## 	in_shp		Valid path to an existing ESRI shapefile on disk
+##	epsg		EPSG code (ie. "EPSG:4326")
+##
+##      out_shp		Path to where you want to save reprojected shapefile to.   
+##
+
+def reprojectShp(in_shp, epsg, out_shp):
+    ogr2ogr.main(["", "-f",  "ESRI Shapefile", "-t_srs", epsg, out_shp, in_shp])
+
+
+## shpToWKT: 	String, boolean -> String 
+## Purpose: 	Takes in the path to an ESRI shapefile and converts it to a WKT string. 
+## 		By default, will reproject the shapefile to EPSG:4326 prior to converting to WKT, but can be disabled by passing in False as 
+##		the second parameter.
+##
+## Inputs:	
+## 	in_shp	Valid path to an existing ESRI shapefile on disk
+##	reproj	(Optional, default is True) Disables reprojecting to EPSG:4326 and keeps the source CRS when set to False
+##
+
+
+def shpToWKT(in_shp, reproj=True):
+    r = shapefile.Reader(in_shp)
+    g = []
+    for s in r.shapes():
+        g.append(pygeoif.geometry.as_shape(s))
+    m = pygeoif.MultiPoint(g)
+    return m.wkt
